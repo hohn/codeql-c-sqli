@@ -1,3 +1,9 @@
 add-user
-
 users.sqlite
+cpp-sqli-834ef46/db-cpp/default/cache/*
+cpp-sqli-834ef46/diagnostic/*
+
+cpp-sqli-834ef46/log/database-analyze-*
+cpp-sqli-834ef46/log/database-interpret-results-*
+cpp-sqli-834ef46/log/execute-queries-*
+cpp-sqli-834ef46/results/*

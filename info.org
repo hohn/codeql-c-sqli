@@ -12,6 +12,31 @@
 
      cd $SRCDIR && codeql database create --language=cpp -s . -j 8 -v $DB --command='./build.sh'
    #+END_SRC
+** analyze db
+   #+BEGIN_SRC sh 
+     # Check paths
+     echo $DB
+     echo $SRCDIR
+
+     # setup
+     cd $SRCDIR
+     codeql pack install
+
+     # Run the query
+     cd $SRCDIR
+     codeql database analyze                         \
+            -v                                       \
+            --ram=14000                              \
+            -j12                                     \
+            --rerun                                  \
+            --format=sarif-latest                    \
+            --output cpp-sqli-834ef46.sarif          \
+            --                                       \
+            $DB                                      \
+            $SRCDIR/SqlInjection.ql
+
+   #+END_SRC
+
 ** hardware
    #+BEGIN_SRC sh 
      0:$ uname -a
