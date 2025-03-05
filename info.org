@@ -1,0 +1,35 @@
+* mac
+** build db
+   cpp-sqli-834ef46/
+
+   #+BEGIN_SRC sh 
+     SRCDIR=$(pwd)
+     DB=$SRCDIR/cpp-sqli-$(cd $SRCDIR && git rev-parse --short HEAD)
+
+     echo $DB
+     test -d "$DB" && rm -fR "$DB"
+     mkdir -p "$DB"
+
+     cd $SRCDIR && codeql database create --language=cpp -s . -j 8 -v $DB --command='./build.sh'
+   #+END_SRC
+** hardware
+   #+BEGIN_SRC sh 
+     0:$ uname -a
+     Darwin ghm3 23.6.0 Darwin Kernel Version 23.6.0: Thu Dec 19 20:47:16 PST 2024; root:xnu-10063.141.1.703.2~1/RELEASE_ARM64_T6031 arm64
+
+     0:$ sw_vers -productVersion
+     14.7.3
+
+     0:$ sysctl -n machdep.cpu.brand_string
+     Apple M3 Max
+
+     0:$ sysctl hw.model
+     hw.model: Mac15,8
+   #+END_SRC
+
+** codeql
+   #+BEGIN_SRC sh 
+     0:$ codeql --version
+     CodeQL command-line toolchain release 2.20.0.
+   #+END_SRC
+

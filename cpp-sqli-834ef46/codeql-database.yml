@@ -1,0 +1,11 @@
+---
+sourceLocationPrefix: /Users/hohn/work-gh/codeql-c-sqli-lfs
+baselineLinesOfCode: 78
+unicodeNewlines: false
+columnKind: utf8
+primaryLanguage: cpp
+creationMetadata:
+  sha: 834ef46858acb118b06b7540445ec80124e7f13f
+  cliVersion: 2.20.0
+  creationTime: 2025-03-05T03:28:50.939516Z
+finalised: true
