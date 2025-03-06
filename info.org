@@ -58,3 +58,138 @@
      CodeQL command-line toolchain release 2.20.0.
    #+END_SRC
 
+* windows
+** analyze db built on mac
+   #+BEGIN_SRC sh 
+     # nushell
+     # Check paths
+     let SRCDIR = (pwd)
+     let DB = $"($SRCDIR)/cpp-sqli-834ef46"
+
+     echo $DB
+     echo $SRCDIR
+
+     # setup
+     cd $SRCDIR
+     codeql pack install
+
+     # Run the query
+     cd $SRCDIR
+     (
+         codeql database analyze 
+         -v 
+         --ram=14000 
+         -j12 
+         --rerun 
+         --format=sarif-latest 
+         --output=cpp-sqli-834ef46-windows.sarif 
+         -- 
+         $DB 
+         $"($SRCDIR)/SqlInjection.ql"
+     )
+   #+END_SRC
+
+   - query log
+   #+BEGIN_SRC text
+     ~\work-gh\codeql-c-sqli-lfs> (
+         codeql database analyze
+         -v
+         --ram=14000
+         -j12
+         --rerun
+         --format=sarif-latest
+         --output=cpp-sqli-834ef46-windows.sarif
+         --
+         $DB
+         $"($SRCDIR)/SqlInjection.ql"
+     )
+     Writing logs to C:\Users\mhhoh\work-gh\codeql-c-sqli-lfs\cpp-sqli-834ef46\log\database-analyze-20250305.163853.167.log.
+     Running queries.
+     Stringpool size measured as 2326938
+     Writing logs to C:\Users\mhhoh\work-gh\codeql-c-sqli-lfs\cpp-sqli-834ef46\log\execute-queries-20250305.163853.654.log.
+     Recording pack reference codeql-workshop/cpp-sql-injection at C:\Users\mhhoh\work-gh\codeql-c-sqli-lfs.
+     Error retrieving qlpack commit hash from Git repository
+     Compiling query plan for C:\Users\mhhoh\work-gh\codeql-c-sqli-lfs\SqlInjection.ql.
+     Resolving imports for C:\Users\mhhoh\work-gh\codeql-c-sqli-lfs\SqlInjection.ql.
+     Checking QL for C:\Users\mhhoh\work-gh\codeql-c-sqli-lfs\SqlInjection.ql.
+     Optimizing C:\Users\mhhoh\work-gh\codeql-c-sqli-lfs\SqlInjection.ql.
+     [1/1 comp 40.1s] Compiled C:\Users\mhhoh\work-gh\codeql-c-sqli-lfs\SqlInjection.ql.
+     Starting evaluation of codeql-workshop\cpp-sql-injection\SqlInjection.ql.
+     [1/1 eval 3.4s] Evaluation done; writing results to codeql-workshop\cpp-sql-injection\SqlInjection.bqrs.
+     Shutting down query evaluator.
+     Interpreting results.
+     Writing logs to C:\Users\mhhoh\work-gh\codeql-c-sqli-lfs\cpp-sqli-834ef46\log\database-interpret-results-20250305.163940.362.log.
+     Recording pack reference codeql-workshop/cpp-sql-injection at C:\Users\mhhoh\work-gh\codeql-c-sqli-lfs.
+     Interpreting C:\Users\mhhoh\work-gh\codeql-c-sqli-lfs\SqlInjection.ql...
+      ... found results file at C:\Users\mhhoh\work-gh\codeql-c-sqli-lfs\cpp-sqli-834ef46\results\codeql-workshop\cpp-sql-injection\SqlInjection.bqrs.
+     Interpreted pathproblem query "SQLI Vulnerability" (cpp/sqlivulnerable) at path C:\Users\mhhoh\work-gh\codeql-c-sqli-lfs\cpp-sqli-834ef46\results\codeql-workshop\cpp-sql-injection\SqlInjection.bqrs.
+     Interpreting file coverage baseline information
+     Finished interpreting file coverage baseline information.
+     Interpreting diagnostic messages...
+     Found 2 raw diagnostic messages.
+     Processed diagnostic messages (removed 0 due to limits, created 0 summary diagnostics for status page).
+     Interpreted diagnostic messages (34ms).
+     Exporting results to SARIF...
+     Exported results to SARIF (90ms).
+   #+END_SRC
+
+     
+** build db
+   cpp-sqli-834ef46/
+
+   #+BEGIN_SRC sh 
+     SRCDIR=$(pwd)
+     DB=$SRCDIR/cpp-sqli-$(cd $SRCDIR && git rev-parse --short HEAD)
+
+     echo $DB
+     test -d "$DB" && rm -fR "$DB"
+     mkdir -p "$DB"
+
+     cd $SRCDIR && codeql database create --language=cpp -s . -j 8 -v $DB --command='./build.sh'
+   #+END_SRC
+** analyze db
+   #+BEGIN_SRC sh 
+     # Check paths
+     echo $DB
+     echo $SRCDIR
+
+     # setup
+     cd $SRCDIR
+     codeql pack install
+
+     # Run the query
+     cd $SRCDIR
+     codeql database analyze                         \
+            -v                                       \
+            --ram=14000                              \
+            -j12                                     \
+            --rerun                                  \
+            --format=sarif-latest                    \
+            --output cpp-sqli-834ef46.sarif          \
+            --                                       \
+            $DB                                      \
+            $SRCDIR/SqlInjection.ql
+
+   #+END_SRC
+
+** hardware
+   #+BEGIN_SRC sh 
+     codeql-c-sqli-lfs> systeminfo | findstr /B /C:"OS Name" /C:"OS Version"
+     OS Name:                       Microsoft Windows 11 Pro
+     OS Version:                    10.0.26100 N/A Build 26100
+
+
+     (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion").ReleaseId
+     2009
+
+
+     Get-CimInstance -ClassName Win32_Processor | Select-Object -ExpandProperty Name
+     Intel(R) Core(TM) i7-14700K
+   #+END_SRC
+
+** codeql
+   #+BEGIN_SRC sh 
+     ~\work-gh\codeql-c-sqli-lfs> codeql --version
+     CodeQL command-line toolchain release 2.20.5.
+   #+END_SRC
+
